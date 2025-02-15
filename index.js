@@ -18,6 +18,7 @@ app.engine('hbs', hbs.engine({
     layoutsDir: __dirname + '/views/layouts/',
 }));
 
+app.use(express.static('public'));
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
