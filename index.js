@@ -48,19 +48,26 @@ app.get('/', (req, res) => {
 
 // Show article by this slug
 app.get('/article/:slug', (req, res) => {
-    let query = `SELECT * FROM article WHERE slug='${req.params.slug}'`;
-    let article;
-    
+    let query = `SELECT * FROM article WHERE slug="${req.params.slug}"`
+    let article
     con.query(query, (err, result) => {
         if (err) throw err;
-        article = result;
-        res.render('article', {
-            article: article
-        });
-    });
+        article = result[0]
+        if (article.author_id) {
+            let authorQuery = `SELECT name FROM author WHERE id=${article.author_id}`;
+             con.query(authorQuery, (err, authorResult) => {
+                if (err) throw err;
+                    let authorName = authorResult.length > 0 ? 
+                    authorResult[0].name : 'Unknown Author';
+                    article.authorName = authorResult[0].name;
+                    res.render('article', {
+                        article: article,
+                        author_name: authorName
+            })
+        })
+    }
+    })
 });
-
-
 
 app.listen(3003, () => {
     console.log('App is started at http://localhost:3003')
